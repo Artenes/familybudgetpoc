@@ -1,5 +1,6 @@
 package io.github.artenes.familybudget
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,24 +12,24 @@ import io.github.artenes.familybudget.data.BankAccount
 import io.github.artenes.familybudget.data.BankTransaction
 import kotlinx.android.synthetic.main.recycler_view_layout.view.*
 
-class BankAccountFragment : Fragment() {
+class BankAccountFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.recycler_view_layout, container, false)
 
-        val adapter: BankAccountAdapter = BankAccountAdapter()
-        val account = BankAccount(balance = 5000)
+        val adapter = BankAccountAdapter()
 
-        account.transactions.add(BankTransaction(value = 4000))
-        account.transactions.add(BankTransaction(value = 6000))
-        account.transactions.add(BankTransaction(value = 7000))
-
-        adapter.setData(account)
+        adapter.setData(Repository.INSTANCE.getBradesco())
 
         view.list.layoutManager = LinearLayoutManager(container?.context)
         view.list.adapter =  adapter
+        view.fab.setOnClickListener(this)
 
         return view
+    }
+
+    override fun onClick(v: View?) {
+        startActivity(Intent(context, BankTransactionActivity::class.java))
     }
 
 }

@@ -8,7 +8,7 @@ import io.github.artenes.familybudget.R
 import io.github.artenes.familybudget.data.BankTransaction
 import kotlinx.android.synthetic.main.balance_view.view.*
 import kotlinx.android.synthetic.main.date_view.view.*
-import kotlinx.android.synthetic.main.transaction_view.view.*
+import kotlinx.android.synthetic.main.transaction_line_view.view.*
 import java.text.DateFormat
 import java.text.NumberFormat
 
@@ -21,6 +21,11 @@ fun Int.toMoney(): String {
 fun Long.toDate(): String {
     val format = DateFormat.getDateInstance()
     return format.format(this)
+}
+
+fun String.toCents(): Int {
+    val money = this.toFloat()
+    return (money * 100).toInt()
 }
 
 interface BankAccountDataItem
@@ -68,7 +73,7 @@ class TransactionView(view: View) : RecyclerView.ViewHolder(view) {
     companion object {
 
         fun create(inflater: LayoutInflater, parent: ViewGroup): TransactionView {
-            val view = inflater.inflate(R.layout.transaction_view, parent, false)
+            val view = inflater.inflate(R.layout.transaction_line_view, parent, false)
             return TransactionView(view)
         }
 
