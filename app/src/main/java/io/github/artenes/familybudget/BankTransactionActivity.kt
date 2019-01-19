@@ -9,7 +9,7 @@ class BankTransactionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view)
 
-        supportFragmentManager.beginTransaction().replace(R.id.container, BankTransactionFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.content, BankTransactionFragment()).commit()
     }
 
 }

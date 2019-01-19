@@ -1,4 +1,4 @@
-package io.github.artenes.familybudget.bank_account
+package io.github.artenes.familybudget.bankaccount
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

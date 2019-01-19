@@ -1,4 +1,4 @@
-package io.github.artenes.familybudget.bank_account
+package io.github.artenes.familybudget.bankaccount
 
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +13,7 @@ import java.text.DateFormat
 import java.text.NumberFormat
 
 fun Int.toMoney(): String {
-    val money = this / 100
+    val money = this / 100.00
     val format = NumberFormat.getCurrencyInstance()
     return format.format(money)
 }
@@ -24,8 +24,8 @@ fun Long.toDate(): String {
 }
 
 fun String.toCents(): Int {
-    val money = this.toFloat()
-    return (money * 100).toInt()
+    val money = this.replace(",", ".").toFloat()
+    return (money * 100.00).toInt()
 }
 
 interface BankAccountDataItem

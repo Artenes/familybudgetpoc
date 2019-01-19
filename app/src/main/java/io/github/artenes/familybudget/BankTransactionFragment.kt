@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.github.artenes.familybudget.bank_account.toCents
+import io.github.artenes.familybudget.bankaccount.toCents
 import io.github.artenes.familybudget.data.BankTransaction
 
 import kotlinx.android.synthetic.main.transaction_view.view.*
@@ -17,7 +17,7 @@ class BankTransactionFragment : Fragment(), View.OnClickListener {
 
         view.save.setOnClickListener(this)
 
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return view
     }
 
     override fun onClick(v: View?) {

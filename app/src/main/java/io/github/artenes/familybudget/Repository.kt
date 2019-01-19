@@ -20,7 +20,7 @@ class Repository {
     }
 
     fun addTransactionToBradesco(transaction: BankTransaction) {
-        BRADESCO.transactions.add(transaction)
+        BRADESCO.addTransaction(transaction)
     }
 
 }
