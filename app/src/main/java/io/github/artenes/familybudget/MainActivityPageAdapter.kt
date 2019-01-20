@@ -11,10 +11,6 @@ class MainActivityPageAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     init {
 
         pages.add(FragmentTab("Bradesco", BankAccountFragment()))
-        pages.add(FragmentTab("Cartao Bradesco", Fragment()))
-        pages.add(FragmentTab("Cartao Nubank", Fragment()))
-        pages.add(FragmentTab("Nuconta", Fragment()))
-        pages.add(FragmentTab("Contas", Fragment()))
 
     }
 
