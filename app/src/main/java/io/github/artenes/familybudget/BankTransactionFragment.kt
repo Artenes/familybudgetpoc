@@ -14,6 +14,8 @@ import kotlinx.android.synthetic.main.transaction_view.view.*
 
 class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEditorActionListener {
 
+    lateinit var accountId: String
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.transaction_view, container, false)
 
@@ -32,8 +34,9 @@ class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEdi
         }
 
         val transaction = BankTransaction(value = value.toCents(), description =  description)
-        Repository.INSTANCE.addTransactionToBradesco(transaction)
-        activity?.finish()
+        Repository.INSTANCE.addTransaction(accountId, transaction) {
+            activity?.finish()
+        }
     }
 
     override fun onClick(v: View?) {

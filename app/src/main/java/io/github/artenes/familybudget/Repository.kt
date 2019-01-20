@@ -1,13 +1,17 @@
 package io.github.artenes.familybudget
 
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.FirebaseFirestore
 import io.github.artenes.familybudget.data.BankAccount
 import io.github.artenes.familybudget.data.BankTransaction
 
 class Repository {
 
-    companion object {
+    private val firebase = FirebaseFirestore.getInstance()
 
-        private val BRADESCO: BankAccount = BankAccount()
+    private val cachedAccounts: MutableMap<String, BankAccount> = mutableMapOf()
+
+    companion object {
 
         val INSTANCE: Repository by lazy {
             Repository()
@@ -15,12 +19,40 @@ class Repository {
 
     }
 
-    fun getBradesco(): BankAccount {
-        return BRADESCO
+    fun getAccount(id: String): BankAccount {
+        if (!cachedAccounts.containsKey(id)) {
+
+            val accountTask = firebase.collection("accounts").document(id).get()
+            val transactionsTask = firebase.collection("accounts").document(id).collection("transactions").get()
+
+            val accountSnap = Tasks.await(accountTask)
+            val transactionsSnap = Tasks.await(transactionsTask)
+
+            val account: BankAccount = accountSnap.toObject(BankAccount::class.java) as BankAccount
+            val transactions: MutableList<BankTransaction> = transactionsSnap.toObjects(BankTransaction::class.java)
+
+            account.transactions = transactions
+
+            return account
+
+        } else {
+
+            return cachedAccounts[id] as BankAccount
+
+        }
     }
 
-    fun addTransactionToBradesco(transaction: BankTransaction) {
-        BRADESCO.addTransaction(transaction)
+    fun addTransaction(accountId: String, transaction: BankTransaction, onComplete: () -> Unit) {
+        val map = mutableMapOf<String, Any>()
+        map.put("id", transaction.id)
+        map.put("description", transaction.description)
+        map.put("value", transaction.value)
+        map.put("timestamp", transaction.timestamp)
+        firebase.collection("accounts").document(accountId).collection("transactions").document(transaction.id).set(map)
+            .addOnSuccessListener {
+                cachedAccounts[accountId]?.addTransaction(transaction)
+                onComplete()
+            }
     }
 
 }

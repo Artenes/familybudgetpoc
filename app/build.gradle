@@ -34,4 +34,9 @@ dependencies {
     implementation 'androidx.viewpager:viewpager:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-firestore:17.1.5'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

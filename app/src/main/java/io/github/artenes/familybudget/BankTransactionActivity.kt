@@ -9,7 +9,11 @@ class BankTransactionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view)
 
-        supportFragmentManager.beginTransaction().replace(R.id.content, BankTransactionFragment()).commit()
+        val accountId = intent?.getStringExtra("accountid") ?: ""
+
+        val fragment = BankTransactionFragment()
+        fragment.accountId = accountId
+        supportFragmentManager.beginTransaction().replace(R.id.content, fragment).commit()
     }
 
 }
