@@ -95,7 +95,6 @@ class TransactionView(view: View, val listener: TransactionClickListener) : Recy
     fun bind(dataItem: TransactionDataItem) {
         itemView.value.text = dataItem.transaction.value.formatAsMoney()
         itemView.description.text = dataItem.transaction.description
-        itemView.transactionDate.text = dataItem.transaction.timestamp.toDate()
         itemView.setOnClickListener(this)
     }
 
