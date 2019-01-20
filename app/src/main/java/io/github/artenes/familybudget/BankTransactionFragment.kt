@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.github.artenes.familybudget.bankaccount.toCents
+import io.github.artenes.familybudget.bankaccount.toDate
 import io.github.artenes.familybudget.bankaccount.toEditableMoneyString
 import io.github.artenes.familybudget.data.BankTransaction
 import kotlinx.android.synthetic.main.transaction_view.view.*
@@ -57,6 +58,8 @@ class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEdi
                     view.description.setText("")
                     view.debit.isChecked = true
                 }
+
+                view.date.text = bankTransaction.timestamp.toDate()
 
             }
         }
