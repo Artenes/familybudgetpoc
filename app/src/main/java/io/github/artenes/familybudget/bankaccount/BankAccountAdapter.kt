@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.github.artenes.familybudget.data.BankAccount
+import io.github.artenes.familybudget.data.BankTransaction
 import java.util.*
 
-class BankAccountAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class BankAccountAdapter(val listener: TransactionClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), TransactionClickListener {
 
     companion object {
 
@@ -68,7 +69,7 @@ class BankAccountAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         VIEW_TYPE_BALANCE -> BalanceView.create(LayoutInflater.from(parent.context), parent)
         VIEW_TYPE_DATE -> DateView.create(LayoutInflater.from(parent.context), parent)
-        else -> TransactionView.create(LayoutInflater.from(parent.context), parent)
+        else -> TransactionView.create(LayoutInflater.from(parent.context), parent, this)
     }
 
     override fun getItemCount(): Int = dataItems.size
@@ -80,6 +81,10 @@ class BankAccountAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             is DateView -> holder.bind(item as DateDataItem)
             else -> (holder as TransactionView).bind(item as TransactionDataItem)
         }
+    }
+
+    override fun onTransactionClicked(position: Int, transaction: BankTransaction) {
+        listener.onTransactionClicked(position, (dataItems[position] as TransactionDataItem).transaction)
     }
 
 }

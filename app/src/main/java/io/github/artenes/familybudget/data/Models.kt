@@ -9,9 +9,21 @@ class BankAccount {
     var balance: Int = 0
     var transactions: MutableList<BankTransaction> = mutableListOf()
 
-    fun addTransaction(transaction: BankTransaction) {
-        balance += transaction.value
-        transactions.add(transaction)
+    fun saveTransaction(transaction: BankTransaction) {
+        val position = transactions.indexOfFirst { it.id == transaction.id }
+        if (position > -1) {
+            val originalTransaction = transactions.get(position)
+            if (originalTransaction.value > 0) {
+                balance -= originalTransaction.value
+            } else {
+                balance += originalTransaction.value
+            }
+            balance += transaction.value
+            transactions[position] = transaction
+        } else {
+            balance += transaction.value
+            transactions.add(transaction)
+        }
     }
 
 }

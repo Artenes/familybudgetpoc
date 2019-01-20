@@ -12,10 +12,13 @@ import kotlinx.android.synthetic.main.transaction_line_view.view.*
 import java.text.DateFormat
 import java.text.NumberFormat
 
-fun Int.toMoney(): String {
-    val money = this / 100.00
+fun Int.formatAsMoney(): String {
     val format = NumberFormat.getCurrencyInstance()
-    return format.format(money)
+    return format.format(this.toMoney())
+}
+
+fun Int.toMoney(): Double {
+    return this / 100.00
 }
 
 fun Long.toDate(): String {
@@ -29,6 +32,12 @@ fun String.toCents(): Int {
 }
 
 interface BankAccountDataItem
+
+interface TransactionClickListener {
+
+    fun onTransactionClicked(position: Int, transaction: BankTransaction)
+
+}
 
 data class BalanceDataItem(val balance: Int) : BankAccountDataItem
 data class DateDataItem(val timestamp: Long) : BankAccountDataItem
@@ -46,7 +55,7 @@ class BalanceView(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(dataItem: BalanceDataItem) {
-        itemView.balance.text = dataItem.balance.toMoney()
+        itemView.balance.text = dataItem.balance.formatAsMoney()
     }
 
 }
@@ -68,21 +77,26 @@ class DateView(view: View) : RecyclerView.ViewHolder(view) {
 
 }
 
-class TransactionView(view: View) : RecyclerView.ViewHolder(view) {
+class TransactionView(view: View, val listener: TransactionClickListener) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
     companion object {
 
-        fun create(inflater: LayoutInflater, parent: ViewGroup): TransactionView {
+        fun create(inflater: LayoutInflater, parent: ViewGroup, listener: TransactionClickListener): TransactionView {
             val view = inflater.inflate(R.layout.transaction_line_view, parent, false)
-            return TransactionView(view)
+            return TransactionView(view, listener)
         }
 
     }
 
     fun bind(dataItem: TransactionDataItem) {
-        itemView.value.text = dataItem.transaction.value.toMoney()
+        itemView.value.text = dataItem.transaction.value.formatAsMoney()
         itemView.description.text = dataItem.transaction.description
         itemView.transactionDate.text = dataItem.transaction.timestamp.toDate()
+        itemView.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        listener.onTransactionClicked(adapterPosition, BankTransaction())
     }
 
 }

@@ -44,17 +44,30 @@ class Repository {
         }
     }
 
-    fun addTransaction(accountId: String, transaction: BankTransaction, onComplete: () -> Unit) {
+    fun getTransaction(accountId: String, transactionId: String): BankTransaction? {
+
+        val account = getAccount(accountId)
+
+        return try {
+            account.transactions.first {
+                it.id == transactionId
+            }
+        } catch (exception: NoSuchElementException) {
+            null
+        }
+
+    }
+
+    fun saveTransaction(accountId: String, transaction: BankTransaction) {
         val map = mutableMapOf<String, Any>()
         map.put("id", transaction.id)
         map.put("description", transaction.description)
         map.put("value", transaction.value)
         map.put("timestamp", transaction.timestamp)
-        firebase.collection("accounts").document(accountId).collection("transactions").document(transaction.id).set(map)
-            .addOnSuccessListener {
-                cachedAccounts[accountId]?.addTransaction(transaction)
-                onComplete()
-            }
+
+        val task = firebase.collection("accounts").document(accountId).collection("transactions").document(transaction.id).set(map)
+        Tasks.await(task)
+        cachedAccounts[accountId]?.saveTransaction(transaction)
     }
 
 }
