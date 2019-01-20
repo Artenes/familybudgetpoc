@@ -33,6 +33,8 @@ class Repository {
 
             account.transactions = transactions
 
+            cachedAccounts[id] = account
+
             return account
 
         } else {

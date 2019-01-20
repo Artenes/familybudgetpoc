@@ -33,7 +33,13 @@ class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEdi
             return
         }
 
-        val transaction = BankTransaction(value = value.toCents(), description =  description)
+        var valueInCents = value.toCents()
+
+        if (view?.debit?.isChecked == true) {
+            valueInCents = -valueInCents
+        }
+
+        val transaction = BankTransaction(value = valueInCents, description =  description)
         Repository.INSTANCE.addTransaction(accountId, transaction) {
             activity?.finish()
         }

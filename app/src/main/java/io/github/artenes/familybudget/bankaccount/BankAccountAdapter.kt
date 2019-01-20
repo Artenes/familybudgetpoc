@@ -30,6 +30,10 @@ class BankAccountAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         lastDate.set(Calendar.MINUTE, 0)
         lastDate.set(Calendar.SECOND, 0)
 
+        bankAccount.transactions.sortByDescending {
+            it.timestamp
+        }
+
         for (transaction in bankAccount.transactions) {
 
             val dateAsCalendar = Calendar.getInstance()
