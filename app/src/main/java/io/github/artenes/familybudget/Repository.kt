@@ -23,10 +23,9 @@ class Repository {
         if (!cachedAccounts.containsKey(id)) {
 
             val accountTask = firebase.collection("accounts").document(id).get()
-            val transactionsTask = firebase.collection("accounts").document(id).collection("transactions").get()
 
             val accountSnap = Tasks.await(accountTask)
-            val transactionsSnap = Tasks.await(transactionsTask)
+            val transactionsSnap = Tasks.await(accountSnap.reference.collection("transactions").get())
 
             val account: BankAccount = accountSnap.toObject(BankAccount::class.java) as BankAccount
             val transactions: MutableList<BankTransaction> = transactionsSnap.toObjects(BankTransaction::class.java)
