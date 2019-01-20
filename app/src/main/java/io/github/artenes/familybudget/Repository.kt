@@ -44,16 +44,12 @@ class Repository {
         }
     }
 
-    fun getTransaction(accountId: String, transactionId: String): BankTransaction? {
+    fun getTransaction(accountId: String, transactionId: String): BankTransaction {
 
         val account = getAccount(accountId)
 
-        return try {
-            account.transactions.first {
-                it.id == transactionId
-            }
-        } catch (exception: NoSuchElementException) {
-            null
+        return account.transactions.first {
+            it.id == transactionId
         }
 
     }

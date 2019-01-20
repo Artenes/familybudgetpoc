@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.github.artenes.familybudget.bankaccount.toCents
-import io.github.artenes.familybudget.bankaccount.toMoney
+import io.github.artenes.familybudget.bankaccount.toEditableMoneyString
 import io.github.artenes.familybudget.data.BankTransaction
 import kotlinx.android.synthetic.main.transaction_view.view.*
+import java.util.NoSuchElementException
 
 class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEditorActionListener {
 
@@ -18,7 +19,7 @@ class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEdi
 
     lateinit var transactionId: String
 
-    var bankTransaction: BankTransaction? = null
+    var bankTransaction: BankTransaction = BankTransaction()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.transaction_view, container, false)
@@ -26,17 +27,39 @@ class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEdi
         view.save.setOnClickListener(this)
         view.description.setOnEditorActionListener(this)
 
+        return view
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        bind(view as View)
+    }
+
+    fun bind(view: View) {
         AppExecutors.INSTANCE.diskIO().run {
-            bankTransaction = Repository.INSTANCE.getTransaction(accountId, transactionId)
-            if (bankTransaction != null) {
-                AppExecutors.INSTANCE.mainThread().run {
-                    view.value.setText(bankTransaction?.value?.toMoney().toString())
-                    view.description.setText(bankTransaction?.description)
+
+            bankTransaction = try {
+                Repository.INSTANCE.getTransaction(accountId, transactionId)
+            } catch (exception: NoSuchElementException) {
+                BankTransaction()
+            }
+
+            AppExecutors.INSTANCE.mainThread().run {
+
+                val isNew = bankTransaction.value == 0
+
+                if (!isNew) {
+                    view.value.setText(bankTransaction.value.toEditableMoneyString())
+                    view.description.setText(bankTransaction.description)
+                    view.debit.isChecked = bankTransaction.value < 0
+                } else {
+                    view.value.setText("")
+                    view.description.setText("")
+                    view.debit.isChecked = true
                 }
+
             }
         }
-
-        return view
     }
 
     private fun save() {
@@ -54,16 +77,10 @@ class BankTransactionFragment : Fragment(), View.OnClickListener, TextView.OnEdi
         }
 
         AppExecutors.INSTANCE.diskIO().execute {
-            val transaction = if (bankTransaction == null) {
-                BankTransaction(value = valueInCents, description = description)
-            } else {
-                (bankTransaction as BankTransaction).also {
-                    it.value = valueInCents
-                    it.description = description
-                }
-            }
+            bankTransaction.value = valueInCents
+            bankTransaction.description = description
+            Repository.INSTANCE.saveTransaction(accountId, bankTransaction)
 
-            Repository.INSTANCE.saveTransaction(accountId, transaction)
             AppExecutors.INSTANCE.mainThread().execute {
                 activity?.finish()
             }

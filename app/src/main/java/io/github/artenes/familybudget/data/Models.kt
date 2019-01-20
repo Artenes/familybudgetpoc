@@ -12,14 +12,12 @@ class BankAccount {
     fun saveTransaction(transaction: BankTransaction) {
         val position = transactions.indexOfFirst { it.id == transaction.id }
         if (position > -1) {
-            val originalTransaction = transactions.get(position)
-            if (originalTransaction.value > 0) {
-                balance -= originalTransaction.value
+            if (transaction.lastValue > 0) {
+                balance -= transaction.lastValue
             } else {
-                balance += originalTransaction.value
+                balance += -transaction.lastValue
             }
             balance += transaction.value
-            transactions[position] = transaction
         } else {
             balance += transaction.value
             transactions.add(transaction)
@@ -32,9 +30,15 @@ class BankTransaction() {
 
     var id: String = UUID.randomUUID().toString()
     var timestamp: Long = Calendar.getInstance().timeInMillis
-    var value: Int = 0
-    var description: String = "Nova despesa"
+    var description: String = ""
     var store: Store = Store()
+    var value: Int = 0
+        set(value) {
+            lastValue = field
+            field = value
+        }
+    var lastValue: Int = 0
+        private set
 
     constructor(value: Int, description: String) : this() {
         this.value = value

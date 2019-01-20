@@ -21,6 +21,10 @@ fun Int.toMoney(): Double {
     return this / 100.00
 }
 
+fun Int.toEditableMoneyString(): String {
+    return this.toMoney().toString().replace(".", ",").removePrefix("-")
+}
+
 fun Long.toDate(): String {
     val format = DateFormat.getDateInstance()
     return format.format(this)
@@ -28,7 +32,7 @@ fun Long.toDate(): String {
 
 fun String.toCents(): Int {
     val money = this.replace(",", ".").toFloat()
-    return (money * 100.00).toInt()
+    return (money * 100).toInt()
 }
 
 interface BankAccountDataItem
